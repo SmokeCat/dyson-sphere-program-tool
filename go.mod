@@ -1,5 +1,9 @@
-module dyson-sphere-program-tool
+module github.com/smokecat/dyson-sphere-program-tool
 
 go 1.15
 
-replace dyson-sphere-program-tool/internal/gamedata => ../internal/gamedata
+require (
+	github.com/mitchellh/go-homedir v1.1.0
+	github.com/spf13/cobra v1.1.1
+	github.com/spf13/viper v1.7.1
+)
