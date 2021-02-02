@@ -1,24 +1,8 @@
-/*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package cmd
 
 import (
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/smokecat/dyson-sphere-program-tool/internal/gamedata"
 	"github.com/spf13/cobra"
@@ -39,38 +23,34 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(productCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// productCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// productCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func productCmdRun(cmd *cobra.Command, args []string) {
-	fmt.Println("product called ")
-
 	// 获取参数，bluepoint idz
-	if len(args) > 1 {
-		log.Fatal("product: expect one args but have greater than one")
+	if len(args) != 1 {
+		log.Fatal("缺少参数: 需要指定一个物品")
 	}
-	bpId, err :=  strconv.Atoi(args[0])
-	if err != nil {
-		log.Fatal((err))
-	}
+	target := args[0]
 
-	// 获取配置
-	data, err := gamedata.LoadGameData()
+	fmt.Println("生产查询: ", target)
+
+	// 获取配方
+	recipeGraph, err := gamedata.LoadRecipeGraph()
 	if err != nil {
 		log.Fatal(err)
 	}
+	targetItem := (*recipeGraph)[target]
+	if targetItem == nil {
+		log.Fatal("找不到物品: ", target)
+	}
 
-	fmt.Println("game version: ", data.Version)
+	// 递归遍历
+	res := targetItem.RecurCost()
+	for i, j := 0, len(res); i < j; i++ {
+		fmt.Printf("方案%v(产能:%g/s): \n", i+1, (*targetItem).Product[0]["count"].(float64)/(*targetItem).Product[0]["time"].(float64))
+		for k, v := range res[i] {
+			fmt.Printf("%v : %.2f/s\n", k, v)
+		}
+	}
 
-	// 遍历消耗
-	data.PrintCost(bpId)
 }
