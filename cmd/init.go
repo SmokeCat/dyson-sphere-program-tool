@@ -1,15 +1,10 @@
 package cmd
 
 import (
-	"github.com/smokecat/dyson-sphere-program-tool/internal/gamedata"
 	"github.com/spf13/cobra"
-)
 
-type genItem struct {
-	ID      int                      `json:"id"`
-	Product []map[string]interface{} `json:"product"`
-	Cost    []map[string]interface{} `json:"cost"`
-}
+	"github.com/smokecat/dyson-sphere-program-tool/internal/gamedata"
+)
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{

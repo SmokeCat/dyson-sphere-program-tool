@@ -28,7 +28,7 @@ func LoadRecipeGraph() (*RecipeGraph, error) {
 		log.Fatal(err)
 	}
 
-	err = json.Unmarshal([]byte(content), &Recipe)
+	err = json.Unmarshal(content, &Recipe)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,7 +101,12 @@ func InitRecipeGraph() {
 
 	// 写入文件
 	res, err := json.MarshalIndent(&Recipe, "", "  ")
-	ioutil.WriteFile("configs/recipe_graph.json", res, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err = ioutil.WriteFile("configs/recipe_graph.json", res, 0644); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // RecurCost 递归获取消耗
@@ -118,8 +123,8 @@ func (r *RecipeGraphItem) RecurCost() []map[string]float64 {
 // recurCost 递归查询消耗，私有方法
 func recurCost(item *RecipeGraphItem, records *[]map[string]float64, record *map[string]float64) {
 	products := (*item).Product
-	plen := len(products)
-	if plen < 1 {
+	pLen := len(products)
+	if pLen < 1 {
 		return
 	}
 	for _, v := range products {

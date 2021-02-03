@@ -2,7 +2,6 @@ package gamedata
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 )
@@ -41,14 +40,9 @@ func LoadGameData() (*GameData, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = json.Unmarshal([]byte(content), &data)
+	err = json.Unmarshal(content, &data)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return &data, err
-}
-
-// PrintCost 输出消耗
-func (d *GameData) PrintCost(bpID int) {
-	fmt.Println("print cost")
 }

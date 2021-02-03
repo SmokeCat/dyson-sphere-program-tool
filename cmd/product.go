@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/smokecat/dyson-sphere-program-tool/internal/gamedata"
 	"github.com/spf13/cobra"
+
+	"github.com/smokecat/dyson-sphere-program-tool/internal/gamedata"
 )
 
 // productCmd represents the product command
@@ -47,7 +48,8 @@ func productCmdRun(cmd *cobra.Command, args []string) {
 	// 递归遍历
 	res := targetItem.RecurCost()
 	for i, j := 0, len(res); i < j; i++ {
-		fmt.Printf("方案%v(产能:%g/s): \n", i+1, (*targetItem).Product[0]["count"].(float64)/(*targetItem).Product[0]["time"].(float64))
+		fmt.Printf("方案%v(产能:%.2g/s): \n", i+1, (*targetItem).Product[0]["count"].(float64)/(*targetItem).
+			Product[0]["time"].(float64))
 		for k, v := range res[i] {
 			fmt.Printf("%v : %.2f/s\n", k, v)
 		}
