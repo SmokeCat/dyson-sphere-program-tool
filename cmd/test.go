@@ -26,7 +26,9 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 
-		fmt.Println(recipeGraph)
+		for k, v := range *recipeGraph {
+			fmt.Println("k: ", k, "\t\tv: ", *v)
+		}
 	},
 }
 

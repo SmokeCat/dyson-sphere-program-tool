@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+
+	"github.com/smokecat/dyson-sphere-program-tool/internal/util"
 )
 
 // RecipeGraph 配方图，由 GameData 生成，用于本工具数据计算
@@ -24,7 +26,7 @@ type recipeGraphProductItem struct {
 
 type recipeGraphItemWithCount struct {
 	Count int
-	Name string
+	Name  string
 	Item  *RecipeGraphItem
 }
 
@@ -71,7 +73,7 @@ func LoadRecipeGraph() (*RecipeGraph, error) {
 			for jsonProductItemKey, jsonProductItemCount := range jsonProductItem.(map[string]interface{}) {
 				itemWithCount := recipeGraphItemWithCount{
 					Count: int(jsonProductItemCount.(float64)),
-					Name: jsonProductItemKey,
+					Name:  jsonProductItemKey,
 					Item:  (*Recipe)[jsonProductItemKey],
 				}
 				recipeItem.Items[itemIdx] = itemWithCount
@@ -161,34 +163,7 @@ func InitRecipeGraph() {
 	}
 }
 
-// RecurCost 递归获取消耗
-func (r *RecipeGraphItem) RecurCost() []map[string]float64 {
-	record := make(map[string]float64)
-	res := make([]map[string]float64, 0)
-	res = append(res, record)
-
-	// recurCost(r, &res, &record)
-
-	return res
-}
-
-// recurCost 递归查询消耗，私有方法
-// func recurCost(item *RecipeGraphItem, records *[]map[string]float64, record *map[string]float64) {
-// 	products := (*item).Product
-// 	pLen := len(products)
-// 	if pLen < 1 {
-// 		return
-// 	}
-// 	for _, v := range products {
-// 		for it, count := range v {
-// 			if it != "time" && it != "count" {
-// 				(*record)[it] += count.(float64) / v["time"].(float64)
-// 				recurCost((*Recipe)[it], records, record)
-// 			}
-// 		}
-// 	}
-// }
-
+// ProductCalculate 产量计算
 func (r *RecipeGraphItem) ProductCalculate(count int) []map[string]float64 {
 	product := r.Product
 	resultMapList := make([]map[string]float64, len(product))
@@ -199,6 +174,10 @@ func (r *RecipeGraphItem) ProductCalculate(count int) []map[string]float64 {
 			// 加上当前元素产能
 			resultMapList[formulaIndex][item.Name] += float64(count) * (float64(item.Count) / formulaItem.Time)
 			// 合并当前元素子元素产能
+			childMapList := item.Item.ProductCalculate(count * item.Count)
+			if len(childMapList) > 0 {
+				util.MergeMap(resultMapList[formulaIndex], childMapList[0])
+			}
 		}
 	}
 

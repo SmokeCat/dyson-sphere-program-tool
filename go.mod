@@ -11,4 +11,5 @@ require (
 replace (
 github.com/smokecat/dyson-sphere-program-tool/cmd => ./cmd
 github.com/smokecat/dyson-sphere-program-tool/internal/gamedata => ./internal/gamedata
+github.com/smokecat/dyson-sphere-program-tool/internal/util => ./internal/util
 )

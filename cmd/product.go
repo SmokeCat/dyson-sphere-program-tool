@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -28,10 +29,14 @@ func init() {
 
 func productCmdRun(cmd *cobra.Command, args []string) {
 	// 获取参数，bluepoint idz
-	if len(args) != 1 {
-		log.Fatal("缺少参数: 需要指定一个物品")
+	if len(args) < 1 {
+		log.Fatal("缺少参数: 需要指定物品")
 	}
 	target := args[0]
+	count := 1
+	if len(args) > 1{
+		count, _ = strconv.Atoi(args[1])
+	}
 
 	fmt.Println("生产查询: ", target)
 
@@ -45,14 +50,6 @@ func productCmdRun(cmd *cobra.Command, args []string) {
 		log.Fatal("找不到物品: ", target)
 	}
 
-	// 递归遍历
-	res := targetItem.RecurCost()
-	for i, j := 0, len(res); i < j; i++ {
-		// fmt.Printf("方案%v(产能:%.2g/s): \n", i+1, (*targetItem).Product[0]["count"].(float64)/(*targetItem).
-		// 	Product[0]["time"].(float64))
-		for k, v := range res[i] {
-			fmt.Printf("%v : %.2f/s\n", k, v)
-		}
-	}
+	fmt.Println(targetItem.ProductCalculate(count))
 
 }
